@@ -1,15 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import Onboarding from './screens/Onboarding.jsx';
+import AlienCrossing from './screens/AlienCrossing.jsx';
 import OpeningSequence from './screens/OpeningSequence.jsx';
 import Scene1 from './screens/Scene1.jsx';
 
 // App phases (state machine)
-// welcome → disclaimer → age_input → opening → scene1_walkin → scene1_feet
-// → scene1_selection → scene1_victory → scene1_done
+// welcome → disclaimer → age_input → alien_crossing → opening → scene1_walkin
+// → scene1_feet → scene1_selection → scene1_victory → scene1_done
 const PHASES = {
   WELCOME: 'welcome',
   DISCLAIMER: 'disclaimer',
   AGE_INPUT: 'age_input',
+  ALIEN_CROSSING: 'alien_crossing',
   OPENING: 'opening',
   SCENE1: 'scene1',
 };
@@ -44,7 +46,7 @@ export default function App() {
       startTimestamp: new Date().toISOString(),
       deviceType: detectDeviceType(),
     }));
-    goTo(PHASES.OPENING);
+    goTo(PHASES.ALIEN_CROSSING);
   }, [goTo]);
 
   const handleOpeningDone = useCallback(() => goTo(PHASES.SCENE1), [goTo]);
@@ -94,6 +96,10 @@ export default function App() {
           onDisclaimerDone={handleDisclaimerDone}
           onAgeSubmit={handleAgeSubmit}
         />
+      )}
+
+      {phase === PHASES.ALIEN_CROSSING && (
+        <AlienCrossing onDone={() => goTo(PHASES.OPENING)} />
       )}
 
       {phase === PHASES.OPENING && (
