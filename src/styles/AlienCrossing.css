@@ -12,6 +12,8 @@
   transform: translateY(-50%);
   animation: alien-glide 8s linear forwards;
   pointer-events: none;
+  display: flex;
+  align-items: center;
 }
 
 @keyframes alien-glide {
