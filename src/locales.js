@@ -27,6 +27,9 @@ export const strings = {
 
     // Scene 1
     pick_hero: 'Pick your hero!',
+    char_boy: 'Boy',
+    char_girl: 'Girl',
+    char_alien: 'Alien',
 
     // Victory reactions
     alien_reaction: 'I knew it!!',
@@ -61,6 +64,9 @@ export const strings = {
 
     // Scene 1
     pick_hero: 'Escolha o seu herói!',
+    char_boy: 'Menino',
+    char_girl: 'Menina',
+    char_alien: 'Alienígena',
 
     // Victory reactions
     alien_reaction: 'Eu sabia!!',
