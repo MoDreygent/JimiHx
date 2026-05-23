@@ -3,10 +3,10 @@ import Onboarding from './screens/Onboarding.jsx';
 import AlienCrossing from './screens/AlienCrossing.jsx';
 import OpeningSequence from './screens/OpeningSequence.jsx';
 import Scene1 from './screens/Scene1.jsx';
+import PostGame from './screens/PostGame.jsx';
 
 // App phases (state machine)
-// welcome → disclaimer → age_input → alien_crossing → opening → scene1_walkin
-// → scene1_feet → scene1_selection → scene1_victory → scene1_done
+// welcome → disclaimer → age_input → alien_crossing → opening → scene1 → postgame → done
 const PHASES = {
   WELCOME: 'welcome',
   DISCLAIMER: 'disclaimer',
@@ -14,6 +14,7 @@ const PHASES = {
   ALIEN_CROSSING: 'alien_crossing',
   OPENING: 'opening',
   SCENE1: 'scene1',
+  POSTGAME: 'postgame',
 };
 
 function detectDeviceType() {
@@ -53,12 +54,17 @@ export default function App() {
 
   const handleScene1Complete = useCallback((scene1Data) => {
     setSessionData((prev) => ({ ...prev, scene1: scene1Data }));
-    // Log session data to console (exportable as JSON per spec)
-    const finalData = { ...sessionData, scene1: scene1Data };
-    console.log('[JimiHx] Session Data:', JSON.stringify(finalData, null, 2));
-    // TODO: Scene 2 — for now show a placeholder
+    goTo(PHASES.POSTGAME);
+  }, [goTo]);
+
+  const handlePostGameComplete = useCallback((pgData) => {
+    setSessionData((prev) => {
+      const finalData = { ...prev, postgame: pgData };
+      console.log('[JimiHx] Session Data:', JSON.stringify(finalData, null, 2));
+      return finalData;
+    });
     goTo('done');
-  }, [goTo, sessionData]);
+  }, [goTo]);
 
   if (phase === 'done') {
     return (
@@ -110,6 +116,13 @@ export default function App() {
         <Scene1
           lang={lang}
           onComplete={handleScene1Complete}
+        />
+      )}
+
+      {phase === PHASES.POSTGAME && (
+        <PostGame
+          lang={lang}
+          onComplete={handlePostGameComplete}
         />
       )}
     </div>

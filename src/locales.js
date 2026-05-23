@@ -31,6 +31,9 @@ export const strings = {
     // Victory reactions
     alien_reaction: 'I knew it!!',
     girl_pow: 'POW!',
+
+    // Post-game projective question
+    postgame_question: "Jimi's heading back to his planet… what happens next?",
   },
 
   pt: {
@@ -65,6 +68,9 @@ export const strings = {
     // Victory reactions
     alien_reaction: 'Eu sabia!!',
     girl_pow: 'GOL!',
+
+    // Post-game projective question
+    postgame_question: 'Jimi está voltando para o planeta dele… o que acontece?',
   },
 };
 
