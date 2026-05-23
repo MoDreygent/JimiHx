@@ -6,22 +6,25 @@ import Scene1 from './screens/Scene1.jsx';
 import PostGame from './screens/PostGame.jsx';
 
 // App phases (state machine)
-// welcome → disclaimer → age_input → alien_crossing → opening → scene1 → postgame → done
+// welcome → disclaimer → age_input → alien_crossing → opening
+// → scene1 → [scene2..8 TBD] → postgame → game_over → post_credits → report
 const PHASES = {
-  WELCOME: 'welcome',
-  DISCLAIMER: 'disclaimer',
-  AGE_INPUT: 'age_input',
-  ALIEN_CROSSING: 'alien_crossing',
-  OPENING: 'opening',
-  SCENE1: 'scene1',
-  POSTGAME: 'postgame',
+  WELCOME:       'welcome',
+  DISCLAIMER:    'disclaimer',
+  AGE_INPUT:     'age_input',
+  ALIEN_CROSSING:'alien_crossing',
+  OPENING:       'opening',
+  SCENE1:        'scene1',
+  POSTGAME:      'postgame',
+  GAME_OVER:     'game_over',
+  POST_CREDITS:  'post_credits',
+  REPORT:        'report',
 };
 
 function detectDeviceType() {
   const w = window.screen.width;
   const h = window.screen.height;
-  const shortSide = Math.min(w, h);
-  return shortSide >= 600 ? 'tablet' : 'phone';
+  return Math.min(w, h) >= 600 ? 'tablet' : 'phone';
 }
 
 export default function App() {
@@ -34,11 +37,10 @@ export default function App() {
     screenWidth: window.screen.width,
     screenHeight: window.screen.height,
     scene1: null,
+    postgame: null,
   });
 
   const goTo = useCallback((nextPhase) => setPhase(nextPhase), []);
-
-  const handleDisclaimerDone = useCallback(() => goTo(PHASES.AGE_INPUT), [goTo]);
 
   const handleAgeSubmit = useCallback((age) => {
     setSessionData((prev) => ({
@@ -50,10 +52,9 @@ export default function App() {
     goTo(PHASES.ALIEN_CROSSING);
   }, [goTo]);
 
-  const handleOpeningDone = useCallback(() => goTo(PHASES.SCENE1), [goTo]);
-
   const handleScene1Complete = useCallback((scene1Data) => {
     setSessionData((prev) => ({ ...prev, scene1: scene1Data }));
+    // TODO: advance through scenes 2–8, then go to POSTGAME
     goTo(PHASES.POSTGAME);
   }, [goTo]);
 
@@ -63,24 +64,43 @@ export default function App() {
       console.log('[JimiHx] Session Data:', JSON.stringify(finalData, null, 2));
       return finalData;
     });
-    goTo('done');
+    goTo(PHASES.GAME_OVER);
   }, [goTo]);
 
-  if (phase === 'done') {
+  // ── Placeholder end screens (Scenes 2-8 + ending sequence TBD) ──────────
+  if (phase === PHASES.GAME_OVER) {
     return (
-      <div style={{
-        width: '100%', height: '100%', background: '#1a1a2e',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        color: '#fff', fontFamily: 'sans-serif', padding: '2rem',
-        textAlign: 'center',
-      }}>
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✓</div>
-        <h2 style={{ marginBottom: '0.5rem' }}>Scene 1 Complete</h2>
-        <p style={{ opacity: 0.6, fontSize: '0.9rem' }}>Scene 2 coming soon.</p>
+      <div style={endStyle('#000')}>
+        <p style={{ color: '#fff', fontSize: '2.5rem', fontWeight: 900, letterSpacing: '0.1em' }}>
+          GAME OVER
+        </p>
+        <button style={btnStyle} onClick={() => goTo(PHASES.POST_CREDITS)}>
+          [post-credits tango — tap to continue]
+        </button>
+      </div>
+    );
+  }
+
+  if (phase === PHASES.POST_CREDITS) {
+    return (
+      <div style={endStyle('#0d0d1a')}>
+        <p style={{ color: '#aaa', fontSize: '1rem' }}>
+          ♪ Sheena &amp; Marilyn dance tango — coming soon ♪
+        </p>
+        <button style={btnStyle} onClick={() => goTo(PHASES.REPORT)}>
+          [end credits — tap to see report]
+        </button>
+      </div>
+    );
+  }
+
+  if (phase === PHASES.REPORT) {
+    return (
+      <div style={{ ...endStyle('#0a0a14'), flexDirection: 'column', gap: '1rem', overflowY: 'auto' }}>
+        <p style={{ color: '#ffd54f', fontWeight: 700 }}>Session complete</p>
         <pre style={{
-          marginTop: '2rem', background: 'rgba(255,255,255,0.1)',
-          padding: '1rem', borderRadius: '8px', fontSize: '0.7rem',
+          background: 'rgba(255,255,255,0.08)', padding: '1rem',
+          borderRadius: '8px', fontSize: '0.65rem', color: '#fff',
           textAlign: 'left', maxWidth: '100%', overflow: 'auto',
         }}>
           {JSON.stringify(sessionData, null, 2)}
@@ -88,6 +108,7 @@ export default function App() {
       </div>
     );
   }
+  // ────────────────────────────────────────────────────────────────────────
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -99,7 +120,7 @@ export default function App() {
           lang={lang}
           setLang={setLang}
           onWelcomeDone={() => goTo(PHASES.DISCLAIMER)}
-          onDisclaimerDone={handleDisclaimerDone}
+          onDisclaimerDone={() => goTo(PHASES.AGE_INPUT)}
           onAgeSubmit={handleAgeSubmit}
         />
       )}
@@ -109,22 +130,27 @@ export default function App() {
       )}
 
       {phase === PHASES.OPENING && (
-        <OpeningSequence onDone={handleOpeningDone} />
+        <OpeningSequence onDone={() => goTo(PHASES.SCENE1)} />
       )}
 
       {phase === PHASES.SCENE1 && (
-        <Scene1
-          lang={lang}
-          onComplete={handleScene1Complete}
-        />
+        <Scene1 lang={lang} onComplete={handleScene1Complete} />
       )}
 
       {phase === PHASES.POSTGAME && (
-        <PostGame
-          lang={lang}
-          onComplete={handlePostGameComplete}
-        />
+        <PostGame onComplete={handlePostGameComplete} />
       )}
     </div>
   );
 }
+
+const endStyle = (bg) => ({
+  width: '100%', height: '100%', background: bg,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  flexDirection: 'column', gap: '1.5rem', padding: '2rem',
+});
+
+const btnStyle = {
+  background: 'none', border: '1px solid #444', color: '#888',
+  fontSize: '0.8rem', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer',
+};
