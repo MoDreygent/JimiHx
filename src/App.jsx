@@ -4,6 +4,7 @@ import AlienCrossing from './screens/AlienCrossing.jsx';
 import OpeningSequence from './screens/OpeningSequence.jsx';
 import Scene1 from './screens/Scene1.jsx';
 import PostGame from './screens/PostGame.jsx';
+import GameRunner from './game/GameRunner.jsx';
 
 // App phases (state machine)
 // welcome → disclaimer → age_input → alien_crossing → opening
@@ -26,6 +27,11 @@ function detectDeviceType() {
   const h = window.screen.height;
   return Math.min(w, h) >= 600 ? 'tablet' : 'phone';
 }
+
+// The manifest-driven engine lives behind ?engine=1 while the video clips are
+// still being produced. The hand-built flow below stays the default until the
+// engine has real footage to play.
+const USE_ENGINE = new URLSearchParams(window.location.search).has('engine');
 
 export default function App() {
   const [phase, setPhase] = useState(PHASES.WELCOME);
@@ -66,6 +72,15 @@ export default function App() {
     });
     goTo(PHASES.GAME_OVER);
   }, [goTo]);
+
+  if (USE_ENGINE) {
+    return (
+      <GameRunner
+        lang={lang}
+        onFinish={(run) => console.log('[JimiHx] Run:', JSON.stringify(run, null, 2))}
+      />
+    );
+  }
 
   // ── Placeholder end screens (Scenes 2-8 + ending sequence TBD) ──────────
   if (phase === PHASES.GAME_OVER) {

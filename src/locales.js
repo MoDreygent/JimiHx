@@ -34,6 +34,20 @@ export const strings = {
 
     // Post-game projective question
     postgame_question: "Jimi's heading back to his planet… what happens next?",
+
+    // JH.0 — Gate
+    gate_age: 'Your age',
+    gate_email: 'Your email',
+    gate_ready: 'READY TO LAND',
+    gate_landing: 'LANDING',
+
+    // JH.5 — Which one fits you best?
+    q_fits_you_best: 'Which one fits you best?',
+    opt_under_tree:  'Under the tree',
+    opt_soccer:      'Playing soccer',
+    opt_bike_kick:   'Kicking the bike into the puddle',
+    opt_guitar_kids: 'With the guitar kids',
+    opt_home_sleep:  'Home, sleeping',
   },
 
   pt: {
@@ -71,6 +85,20 @@ export const strings = {
 
     // Post-game projective question
     postgame_question: 'Jimi está voltando para o planeta dele… o que acontece?',
+
+    // JH.0 — Gate
+    gate_age: 'Sua idade',
+    gate_email: 'Seu email',
+    gate_ready: 'PRONTO PRA POUSAR',
+    gate_landing: 'POUSANDO',
+
+    // JH.5 — Which one fits you best?
+    q_fits_you_best: 'Qual combina mais com você?',
+    opt_under_tree:  'Embaixo da árvore',
+    opt_soccer:      'Jogando futebol',
+    opt_bike_kick:   'Chutando a bike na poça',
+    opt_guitar_kids: 'Com a galera do violão',
+    opt_home_sleep:  'Em casa, dormindo',
   },
 };
 
